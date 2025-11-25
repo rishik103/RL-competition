@@ -98,6 +98,38 @@ git push -u origin main
 6. Wait 1-2 minutes for deployment
 7. Your site will be live at: `https://YOUR_USERNAME.github.io/rl-leaderboard/`
 
+## Data Storage & Syncing Across Devices
+
+The leaderboard uses **GitHub as the data source** to sync across all devices.
+
+### How It Works:
+- All users see data from `data.json` in the GitHub repository
+- When you update as admin, you must update the GitHub file
+- Changes sync automatically to all devices within minutes
+
+### Updating Data:
+
+1. **Make changes in Admin Panel** (add/edit/delete participants)
+2. A popup will appear with instructions
+3. Click **"Export Data for GitHub"**
+4. Data is downloaded and copied to clipboard
+5. Go to: https://github.com/rishik103/RL-competition/edit/main/data.json
+6. Paste the exported data (Ctrl+V)
+7. Scroll down and click **"Commit changes"**
+8. Wait 1-2 minutes for changes to appear on all devices
+
+### Manual Update (Alternative):
+1. Export data from admin panel
+2. Edit `data.json` in your local folder
+3. Commit and push:
+   ```bash
+   git add data.json
+   git commit -m "Update leaderboard data"
+   git push
+   ```
+
+---
+
 ## Configuration
 
 ### Change Admin Password

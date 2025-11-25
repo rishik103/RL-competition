@@ -3,6 +3,8 @@ const ADMIN_PASSWORD = 'ibot2025-26'; // Change this to your secure password
 const ADMIN_SECRET_KEY = 'ibot-admin-2025'; // Secret passphrase - change this!
 const STORAGE_KEY = 'rl_leaderboard_data';
 const ADMIN_AUTH_KEY = 'rl_admin_auth';
+const GITHUB_DATA_URL = 'https://raw.githubusercontent.com/rishik103/RL-competition/main/data.json';
+const USE_GITHUB_STORAGE = true; // Set to true to use GitHub, false to use localStorage only
 
 // State
 let participants = [];
@@ -44,9 +46,15 @@ const cancelFormBtn = document.getElementById('cancelForm');
 document.addEventListener('DOMContentLoaded', () => {
     loadData();
     checkAdminAuth();
-    renderLeaderboard();
     setupEventListeners();
     setupSecretAdminAccess();
+    
+    // Load from GitHub if enabled
+    if (USE_GITHUB_STORAGE) {
+        loadFromGitHub();
+    } else {
+        renderLeaderboard();
+    }
 });
 
 // Secret Admin Access - Press Ctrl+Shift+A to show admin button
@@ -167,9 +175,82 @@ function loadData() {
     }
 }
 
+function loadFromGitHub() {
+    loadingState.style.display = 'flex';
+    
+    fetch(GITHUB_DATA_URL + '?t=' + Date.now()) // Cache busting
+        .then(response => response.json())
+        .then(data => {
+            if (data.participants && Array.isArray(data.participants)) {
+                participants = data.participants;
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(participants));
+                renderLeaderboard();
+            } else {
+                renderLeaderboard();
+            }
+            loadingState.style.display = 'none';
+        })
+        .catch(error => {
+            console.error('Error loading from GitHub:', error);
+            // Fallback to localStorage
+            renderLeaderboard();
+            loadingState.style.display = 'none';
+        });
+}
+
 function saveData() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(participants));
     renderLeaderboard();
+    
+    // Show instructions to update GitHub
+    if (USE_GITHUB_STORAGE && isAdminLoggedIn) {
+        showGitHubUpdateInstructions();
+    }
+}
+
+function showGitHubUpdateInstructions() {
+    const modal = document.createElement('div');
+    modal.className = 'modal active';
+    modal.innerHTML = `
+        <div class="modal-content modal-small">
+            <div class="modal-header">
+                <h2>⚠️ Update GitHub Data</h2>
+                <button class="close-btn" onclick="this.closest('.modal').remove()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p style="margin-bottom: 1rem;">To sync this data across all devices, update the <code>data.json</code> file in GitHub:</p>
+                <ol style="margin-left: 1.5rem; margin-bottom: 1rem;">
+                    <li>Click "Export Data" below</li>
+                    <li>Go to <a href="https://github.com/rishik103/RL-competition/edit/main/data.json" target="_blank" style="color: var(--primary-color);">GitHub data.json</a></li>
+                    <li>Replace the content with exported data</li>
+                    <li>Commit changes</li>
+                </ol>
+                <button onclick="exportDataForGitHub()" class="btn-primary" style="width: 100%;">Export Data for GitHub</button>
+                <button onclick="this.closest('.modal').remove()" class="btn-secondary" style="width: 100%; margin-top: 0.5rem;">Skip for Now</button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
+}
+
+function exportDataForGitHub() {
+    const data = {
+        participants: participants,
+        lastUpdated: new Date().toISOString()
+    };
+    const dataStr = JSON.stringify(data, null, 2);
+    const blob = new Blob([dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'data.json';
+    a.click();
+    URL.revokeObjectURL(url);
+    
+    // Also copy to clipboard
+    navigator.clipboard.writeText(dataStr).then(() => {
+        alert('✅ Data exported and copied to clipboard!\n\nNow paste this into GitHub data.json file.');
+    });
 }
 
 function checkAdminAuth() {
@@ -462,3 +543,4 @@ function escapeHtml(text) {
 // Make functions globally accessible for inline event handlers
 window.editParticipant = editParticipant;
 window.deleteParticipant = deleteParticipant;
+window.exportDataForGitHub = exportDataForGitHub;
