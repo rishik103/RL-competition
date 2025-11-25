@@ -1,0 +1,74 @@
+[
+  {
+    "teamName": "AI Wizards",
+    "teamId": "TEAM001",
+    "score": 98.5,
+    "hfRepo": "https://huggingface.co/ai-wizards/rl-agent"
+  },
+  {
+    "teamName": "Neural Ninjas",
+    "teamId": "TEAM002",
+    "score": 95.2,
+    "hfRepo": "https://huggingface.co/neural-ninjas/rl-model"
+  },
+  {
+    "teamName": "Deep Learners",
+    "teamId": "TEAM003",
+    "score": 92.8,
+    "hfRepo": "https://huggingface.co/deep-learners/agent"
+  },
+  {
+    "teamName": "Gradient Gurus",
+    "teamId": "TEAM004",
+    "score": 89.3,
+    "hfRepo": ""
+  },
+  {
+    "teamName": "Policy Pirates",
+    "teamId": "TEAM005",
+    "score": 87.1,
+    "hfRepo": "https://huggingface.co/policy-pirates/rl-solution"
+  },
+  {
+    "teamName": "Q-Learning Legends",
+    "teamId": "TEAM006",
+    "score": 84.6,
+    "hfRepo": ""
+  },
+  {
+    "teamName": "Reward Rebels",
+    "teamId": "TEAM007",
+    "score": 82.9,
+    "hfRepo": "https://huggingface.co/reward-rebels/agent-v2"
+  },
+  {
+    "teamName": "State Explorers",
+    "teamId": "TEAM008",
+    "score": 79.4,
+    "hfRepo": ""
+  },
+  {
+    "teamName": "Action Avengers",
+    "teamId": "TEAM009",
+    "score": 76.2,
+    "hfRepo": "https://huggingface.co/action-avengers/rl-bot"
+  },
+  {
+    "teamName": "Epsilon Eliminators",
+    "teamId": "TEAM010",
+    "score": 73.8,
+    "hfRepo": ""
+  },
+  {
+    "teamName": "Bellman Believers",
+    "teamId": "TEAM011",
+    "score": 71.5,
+    "hfRepo": "https://huggingface.co/bellman-believers/agent"
+  },
+  {
+    "teamName": "Monte Carlo Masters",
+    "teamId": "TEAM012",
+    "score": 68.9,
+    "hfRepo": ""
+  }
+]

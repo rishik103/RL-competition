@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RL Competition Leaderboard</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo-section">
+                    <div class="logo-placeholder">
+                        <img src="IBOT LOGOOO.png" alt="IBOT Logo" class="logo-img">
+                    </div>
+                    <div class="title-section">
+                        <h1>RL Competition</h1>
+                        <p class="subtitle">Reinforcement Learning Challenge 2025</p>
+                    </div>
+                </div>
+                <button id="adminBtn" class="admin-btn" style="display: none;">Admin Login</button>
+            </div>
+        </header>
+
+        <!-- Search Bar -->
+        <div class="search-section">
+            <div class="search-container">
+                <svg class="search-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <path d="M17.5 17.5L13.875 13.875M15.8333 9.16667C15.8333 12.8486 12.8486 15.8333 9.16667 15.8333C5.48477 15.8333 2.5 12.8486 2.5 9.16667C2.5 5.48477 5.48477 2.5 9.16667 2.5C12.8486 2.5 15.8333 5.48477 15.8333 9.16667Z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <input type="text" id="searchInput" placeholder="Search by team name or ID..." class="search-input">
+                <button id="clearSearch" class="clear-btn" style="display: none;">×</button>
+            </div>
+            <div id="searchResult" class="search-result" style="display: none;"></div>
+        </div>
+
+        <!-- Leaderboard -->
+        <div class="leaderboard-section">
+            <div class="leaderboard-header">
+                <h2>Top 10 Teams</h2>
+                <button id="viewAllBtn" class="view-all-btn">View Full Leaderboard</button>
+            </div>
+            
+            <div id="leaderboardContainer" class="leaderboard">
+                <!-- Top 10 will be rendered here -->
+            </div>
+
+            <div id="loadingState" class="loading-state" style="display: none;">
+                <div class="spinner"></div>
+                <p>Loading leaderboard...</p>
+            </div>
+
+            <div id="emptyState" class="empty-state" style="display: none;">
+                <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
+                    <circle cx="40" cy="40" r="38" stroke="#e5e7eb" stroke-width="4"/>
+                    <path d="M40 28V44M40 52H40.02" stroke="#9ca3af" stroke-width="4" stroke-linecap="round"/>
+                </svg>
+                <h3>No participants yet</h3>
+                <p>Check back soon for updates!</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Full Leaderboard Modal -->
+    <div id="fullLeaderboardModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Full Leaderboard</h2>
+                <button class="close-btn" id="closeFullLeaderboard">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="fullLeaderboardContainer" class="leaderboard">
+                    <!-- Full leaderboard will be rendered here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Login Modal -->
+    <div id="adminModal" class="modal">
+        <div class="modal-content modal-small">
+            <div class="modal-header">
+                <h2>Admin Login</h2>
+                <button class="close-btn" id="closeAdminModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="adminLoginForm">
+                    <div class="form-group">
+                        <label for="adminPassword">Password</label>
+                        <input type="password" id="adminPassword" class="form-input" placeholder="Enter admin password" required>
+                    </div>
+                    <button type="submit" class="btn-primary">Login</button>
+                    <p class="admin-hint">Password: <code>ibot2025-26</code></p>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Panel Modal -->
+    <div id="adminPanelModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Admin Panel</h2>
+                <button class="close-btn" id="closeAdminPanel">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="admin-actions">
+                    <button id="addParticipantBtn" class="btn-primary">+ Add Participant</button>
+                    <button id="exportDataBtn" class="btn-secondary">Export Data</button>
+                    <button id="importDataBtn" class="btn-secondary">Import Data</button>
+                    <input type="file" id="importFile" accept=".json" style="display: none;">
+                </div>
+
+                <div id="participantForm" class="participant-form" style="display: none;">
+                    <h3 id="formTitle">Add New Participant</h3>
+                    <form id="participantFormElement">
+                        <input type="hidden" id="editIndex" value="">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="teamName">Team Name *</label>
+                                <input type="text" id="teamName" class="form-input" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="teamId">Team ID *</label>
+                                <input type="text" id="teamId" class="form-input" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="score">Score *</label>
+                                <input type="number" id="score" class="form-input" step="0.01" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="hfRepo">HuggingFace Repo URL</label>
+                                <input type="url" id="hfRepo" class="form-input" placeholder="https://huggingface.co/...">
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn-primary">Save Participant</button>
+                            <button type="button" id="cancelForm" class="btn-secondary">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="admin-table-container">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>Team Name</th>
+                                <th>Team ID</th>
+                                <th>Score</th>
+                                <th>HF Repo</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminTableBody">
+                            <!-- Admin table rows will be rendered here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
