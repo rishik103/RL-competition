@@ -32,6 +32,7 @@ const closeAdminModal = document.getElementById('closeAdminModal');
 const closeAdminPanel = document.getElementById('closeAdminPanel');
 const closeFullLeaderboard = document.getElementById('closeFullLeaderboard');
 const addParticipantBtn = document.getElementById('addParticipantBtn');
+const syncGitHubBtn = document.getElementById('syncGitHubBtn');
 const exportDataBtn = document.getElementById('exportDataBtn');
 const importDataBtn = document.getElementById('importDataBtn');
 const importFile = document.getElementById('importFile');
@@ -153,6 +154,7 @@ function setupEventListeners() {
 
     // Admin Actions
     addParticipantBtn.addEventListener('click', showAddParticipantForm);
+    syncGitHubBtn.addEventListener('click', showGitHubUpdateInstructions);
     exportDataBtn.addEventListener('click', exportData);
     importDataBtn.addEventListener('click', () => importFile.click());
     importFile.addEventListener('change', importData);
@@ -211,22 +213,38 @@ function saveData() {
 function showGitHubUpdateInstructions() {
     const modal = document.createElement('div');
     modal.className = 'modal active';
+    modal.style.zIndex = '10000';
     modal.innerHTML = `
         <div class="modal-content modal-small">
             <div class="modal-header">
-                <h2>⚠️ Update GitHub Data</h2>
+                <h2>🔄 Sync to GitHub</h2>
                 <button class="close-btn" onclick="this.closest('.modal').remove()">&times;</button>
             </div>
             <div class="modal-body">
-                <p style="margin-bottom: 1rem;">To sync this data across all devices, update the <code>data.json</code> file in GitHub:</p>
-                <ol style="margin-left: 1.5rem; margin-bottom: 1rem;">
-                    <li>Click "Export Data" below</li>
-                    <li>Go to <a href="https://github.com/rishik103/RL-competition/edit/main/data.json" target="_blank" style="color: var(--primary-color);">GitHub data.json</a></li>
-                    <li>Replace the content with exported data</li>
-                    <li>Commit changes</li>
+                <p style="margin-bottom: 1rem; font-weight: 600; color: var(--primary-color);">
+                    Follow these steps to sync your changes across all devices:
+                </p>
+                <ol style="margin-left: 1.5rem; margin-bottom: 1.5rem; line-height: 1.8;">
+                    <li><strong>Step 1:</strong> Click "Export & Copy" below</li>
+                    <li><strong>Step 2:</strong> Go to <a href="https://github.com/rishik103/RL-competition/edit/main/data.json" target="_blank" style="color: var(--primary-color); text-decoration: underline;">GitHub data.json</a></li>
+                    <li><strong>Step 3:</strong> Select all (Ctrl+A) and paste (Ctrl+V)</li>
+                    <li><strong>Step 4:</strong> Scroll down and click "Commit changes"</li>
+                    <li><strong>Done!</strong> Changes appear on all devices in 1-2 minutes</li>
                 </ol>
-                <button onclick="exportDataForGitHub()" class="btn-primary" style="width: 100%;">Export Data for GitHub</button>
-                <button onclick="this.closest('.modal').remove()" class="btn-secondary" style="width: 100%; margin-top: 0.5rem;">Skip for Now</button>
+                <div style="background: var(--bg-secondary); padding: 1rem; border-radius: 0.5rem; margin-bottom: 1rem;">
+                    <p style="font-size: 0.875rem; color: var(--text-secondary);">
+                        💡 <strong>Tip:</strong> The data will be automatically downloaded AND copied to your clipboard.
+                    </p>
+                </div>
+                <button onclick="exportDataForGitHub(); this.textContent='✅ Exported & Copied!'; this.disabled=true;" class="btn-primary" style="width: 100%; margin-bottom: 0.5rem;">
+                    📥 Export & Copy to Clipboard
+                </button>
+                <button onclick="window.open('https://github.com/rishik103/RL-competition/edit/main/data.json', '_blank')" class="btn-secondary" style="width: 100%; margin-bottom: 0.5rem;">
+                    🔗 Open GitHub Editor
+                </button>
+                <button onclick="this.closest('.modal').remove()" class="btn-secondary" style="width: 100%;">
+                    Close
+                </button>
             </div>
         </div>
     `;
@@ -239,6 +257,8 @@ function exportDataForGitHub() {
         lastUpdated: new Date().toISOString()
     };
     const dataStr = JSON.stringify(data, null, 2);
+    
+    // Download the file
     const blob = new Blob([dataStr], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -247,10 +267,17 @@ function exportDataForGitHub() {
     a.click();
     URL.revokeObjectURL(url);
     
-    // Also copy to clipboard
-    navigator.clipboard.writeText(dataStr).then(() => {
-        alert('✅ Data exported and copied to clipboard!\n\nNow paste this into GitHub data.json file.');
-    });
+    // Copy to clipboard
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(dataStr).then(() => {
+            alert('✅ Success!\n\n📥 Downloaded: data.json\n📋 Copied to clipboard\n\nNow paste this into GitHub data.json file.');
+        }).catch(err => {
+            console.error('Could not copy to clipboard:', err);
+            alert('✅ Downloaded: data.json\n\n⚠️ Could not auto-copy. Please open the downloaded file and copy its contents.');
+        });
+    } else {
+        alert('✅ Downloaded: data.json\n\nPlease open the file and copy its contents to GitHub.');
+    }
 }
 
 function checkAdminAuth() {
