@@ -43,7 +43,12 @@
         <div class="leaderboard-section">
             <div class="leaderboard-header">
                 <h2>Top 10 Teams</h2>
-                <button id="viewAllBtn" class="view-all-btn">View Full Leaderboard</button>
+                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                    <button id="refreshDataBtn" class="view-all-btn" style="background: transparent; border: 2px solid #8b5cf6; color: #8b5cf6;" title="Refresh data from server">
+                        🔄 Refresh
+                    </button>
+                    <button id="viewAllBtn" class="view-all-btn">View Full Leaderboard</button>
+                </div>
             </div>
             
             <div id="leaderboardContainer" class="leaderboard">

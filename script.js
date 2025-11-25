@@ -28,6 +28,7 @@ const fullLeaderboardModal = document.getElementById('fullLeaderboardModal');
 // Buttons
 const adminBtn = document.getElementById('adminBtn');
 const viewAllBtn = document.getElementById('viewAllBtn');
+const refreshDataBtn = document.getElementById('refreshDataBtn');
 const closeAdminModal = document.getElementById('closeAdminModal');
 const closeAdminPanel = document.getElementById('closeAdminPanel');
 const closeFullLeaderboard = document.getElementById('closeFullLeaderboard');
@@ -135,6 +136,22 @@ function setupEventListeners() {
         renderFullLeaderboard();
     });
 
+    refreshDataBtn.addEventListener('click', () => {
+        refreshDataBtn.textContent = '⏳ Refreshing...';
+        refreshDataBtn.disabled = true;
+        if (USE_GITHUB_STORAGE) {
+            loadFromGitHub();
+            setTimeout(() => {
+                refreshDataBtn.textContent = '🔄 Refresh';
+                refreshDataBtn.disabled = false;
+            }, 2000);
+        } else {
+            renderLeaderboard();
+            refreshDataBtn.textContent = '🔄 Refresh';
+            refreshDataBtn.disabled = false;
+        }
+    });
+
     closeAdminModal.addEventListener('click', () => closeModal(adminModal));
     closeAdminPanel.addEventListener('click', () => {
         closeModal(adminPanelModal);
@@ -180,20 +197,33 @@ function loadData() {
 function loadFromGitHub() {
     loadingState.style.display = 'flex';
     
-    fetch(GITHUB_DATA_URL + '?t=' + Date.now()) // Cache busting
+    // Aggressive cache busting with timestamp and random number
+    const cacheBuster = `?t=${Date.now()}&r=${Math.random()}`;
+    const url = GITHUB_DATA_URL + cacheBuster;
+    
+    fetch(url, {
+        cache: 'no-store', // Prevent browser caching
+        headers: {
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
+            'Expires': '0'
+        }
+    })
         .then(response => response.json())
         .then(data => {
             if (data.participants && Array.isArray(data.participants)) {
                 participants = data.participants;
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(participants));
+                console.log('✅ Loaded from GitHub:', participants.length, 'participants');
                 renderLeaderboard();
             } else {
+                console.log('⚠️ No participants in GitHub data');
                 renderLeaderboard();
             }
             loadingState.style.display = 'none';
         })
         .catch(error => {
-            console.error('Error loading from GitHub:', error);
+            console.error('❌ Error loading from GitHub:', error);
             // Fallback to localStorage
             renderLeaderboard();
             loadingState.style.display = 'none';
@@ -222,21 +252,27 @@ function showGitHubUpdateInstructions() {
             </div>
             <div class="modal-body">
                 <p style="margin-bottom: 1rem; font-weight: 600; color: var(--primary-color);">
-                    Follow these steps to sync your changes across all devices:
+                    ⚠️ IMPORTANT: Changes only sync when you update GitHub!
                 </p>
-                <ol style="margin-left: 1.5rem; margin-bottom: 1.5rem; line-height: 1.8;">
-                    <li><strong>Step 1:</strong> Click "Export & Copy" below</li>
-                    <li><strong>Step 2:</strong> Go to <a href="https://github.com/rishik103/RL-competition/edit/main/data.json" target="_blank" style="color: var(--primary-color); text-decoration: underline;">GitHub data.json</a></li>
-                    <li><strong>Step 3:</strong> Select all (Ctrl+A) and paste (Ctrl+V)</li>
-                    <li><strong>Step 4:</strong> Scroll down and click "Commit changes"</li>
-                    <li><strong>Done!</strong> Changes appear on all devices in 1-2 minutes</li>
-                </ol>
-                <div style="background: var(--bg-secondary); padding: 1rem; border-radius: 0.5rem; margin-bottom: 1rem;">
-                    <p style="font-size: 0.875rem; color: var(--text-secondary);">
-                        💡 <strong>Tip:</strong> The data will be automatically downloaded AND copied to your clipboard.
+                <div style="background: #fff3cd; border-left: 4px solid #f59e0b; padding: 1rem; margin-bottom: 1rem; border-radius: 0.5rem;">
+                    <p style="font-size: 0.875rem; color: #856404; margin: 0;">
+                        <strong>Note:</strong> Local changes are saved on THIS device only. To sync across all devices, you MUST update the GitHub file.
                     </p>
                 </div>
-                <button onclick="exportDataForGitHub(); this.textContent='✅ Exported & Copied!'; this.disabled=true;" class="btn-primary" style="width: 100%; margin-bottom: 0.5rem;">
+                <ol style="margin-left: 1.5rem; margin-bottom: 1.5rem; line-height: 1.8;">
+                    <li><strong>Step 1:</strong> Click "Export & Copy" below → file downloads + copies to clipboard</li>
+                    <li><strong>Step 2:</strong> Click "Open GitHub Editor" → opens in new tab</li>
+                    <li><strong>Step 3:</strong> In GitHub, press <code>Ctrl+A</code> (select all)</li>
+                    <li><strong>Step 4:</strong> Press <code>Ctrl+V</code> (paste new data)</li>
+                    <li><strong>Step 5:</strong> Scroll to bottom → Click green "Commit changes" button</li>
+                    <li><strong>Wait 1-2 minutes</strong> → Data syncs to all devices!</li>
+                </ol>
+                <div style="background: var(--bg-secondary); padding: 1rem; border-radius: 0.5rem; margin-bottom: 1rem;">
+                    <p style="font-size: 0.875rem; color: var(--text-secondary); margin: 0;">
+                        💡 <strong>On other devices:</strong> Click the "🔄 Refresh" button to see updated data immediately.
+                    </p>
+                </div>
+                <button onclick="exportDataForGitHub(); this.textContent='✅ Exported & Copied!'; this.style.background='#10b981';" class="btn-primary" style="width: 100%; margin-bottom: 0.5rem;">
                     📥 Export & Copy to Clipboard
                 </button>
                 <button onclick="window.open('https://github.com/rishik103/RL-competition/edit/main/data.json', '_blank')" class="btn-secondary" style="width: 100%; margin-bottom: 0.5rem;">
