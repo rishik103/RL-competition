@@ -213,17 +213,98 @@ git push
 
 ---
 
+## Automated Evaluation with GitHub Actions
+
+The leaderboard now supports **automated evaluation** via GitHub Actions. Instead of manually adding participants through the admin panel, you can trigger an automated workflow that:
+
+1. Clones the participant's repository
+2. Runs their evaluation script (or uses a fallback heuristic)
+3. Updates `data.json` with the score
+4. Commits and pushes the changes automatically
+
+### How to Use Automated Evaluation
+
+#### Step 1: Go to GitHub Actions
+1. Navigate to your repository: `https://github.com/YOUR_USERNAME/RL-competition`
+2. Click the **Actions** tab
+3. Select "Evaluate Submission and Update Leaderboard" workflow
+
+#### Step 2: Run Workflow
+1. Click **Run workflow** button (right side)
+2. Fill in the required inputs:
+   - **Team Name**: Display name (e.g., "Team Alpha")
+   - **Team ID**: Unique identifier (e.g., "alpha-001")
+   - **Repository URL**: The repo to evaluate (e.g., "https://github.com/participant/submission")
+3. Click **Run workflow**
+
+#### Step 3: Wait for Completion
+- The workflow takes 1-5 minutes depending on evaluation complexity
+- Check the workflow run status in the Actions tab
+- Once complete, `data.json` is automatically updated
+- GitHub Pages will refresh in 1-2 minutes
+- Users can click the **🔄 Refresh** button on the leaderboard to see updates immediately
+
+### How Evaluation Works
+
+The workflow (`scripts/evaluate_and_update.py`):
+
+1. **Clones** the participant's repository
+2. **Checks** for an `evaluate.py` file in the repository root
+3. **Runs** the evaluation:
+   - If `evaluate.py` exists: runs it and expects a numeric score as output
+   - If not found: uses a fallback heuristic (file count × 100, max 10000)
+4. **Updates** `data.json`:
+   - Adds new participant OR updates existing one
+   - Keeps the **higher score** if participant already exists
+   - Updates `lastUpdated` timestamp
+5. **Commits & pushes** changes to the `main` branch
+
+### Customizing the Evaluator
+
+To implement your own evaluation logic, edit `scripts/evaluate_and_update.py`:
+
+```python
+# Replace the evaluation section (around line 105-125) with your test commands
+# Example: Run tests, Docker containers, or API calls
+# The script should output a single numeric score
+```
+
+### Security Notes
+
+⚠️ **Important Security Considerations:**
+
+- The workflow runs **arbitrary code** from participant repositories
+- Only use this for **trusted submissions** or add sandboxing
+- The built-in `GITHUB_TOKEN` has write access to your repository
+- Consider using:
+  - Docker containers with resource limits
+  - Separate evaluation infrastructure
+  - Code review before triggering evaluation
+
+### Permissions
+
+The workflow uses the built-in `GITHUB_TOKEN` (no setup required):
+- ✅ Read repository content
+- ✅ Write to `data.json`
+- ✅ Push commits to `main` branch
+
+No additional secrets or tokens are needed unless you modify the workflow to push to external services.
+
+---
+
 ## Next Steps
 
 1. ✅ Deploy to GitHub Pages
 2. 🔐 Change admin password in `script.js`
 3. 🎨 Add your logo
 4. 📢 Share the link with participants
-5. 🏆 Start adding participants!
+5. 🤖 Use automated evaluation via GitHub Actions
+6. 🏆 Monitor the leaderboard!
 
 ---
 
 **Need Help?**
 - GitHub Pages Docs: https://docs.github.com/pages
+- GitHub Actions Docs: https://docs.github.com/actions
 - Git Tutorial: https://git-scm.com/docs/gittutorial
 - GitHub Desktop Guide: https://docs.github.com/desktop
