@@ -22,6 +22,8 @@ const leaderboardContainer = document.getElementById('leaderboardContainer');
 const fullLeaderboardContainer = document.getElementById('fullLeaderboardContainer');
 const loadingState = document.getElementById('loadingState');
 const emptyState = document.getElementById('emptyState');
+const lastUpdatedSection = document.getElementById('lastUpdatedSection');
+const lastUpdatedLabel = document.getElementById('lastUpdatedLabel');
 
 // Modals
 const adminModal = document.getElementById('adminModal');
@@ -197,8 +199,36 @@ function loadData() {
     }
 }
 
+function formatLastUpdated(value) {
+    if (!value) {
+        return 'Not provided';
+    }
+
+    const parsed = new Date(value);
+    if (!Number.isNaN(parsed.getTime())) {
+        return parsed.toLocaleString(undefined, {
+            dateStyle: 'medium',
+            timeStyle: 'short'
+        });
+    }
+
+    // Fallback to raw string if parsing fails
+    return value;
+}
+
+function setLastUpdatedLabel(displayText, tooltipText) {
+    if (!lastUpdatedSection || !lastUpdatedLabel) {
+        return;
+    }
+
+    lastUpdatedSection.style.display = 'flex';
+    lastUpdatedLabel.textContent = displayText;
+    lastUpdatedSection.title = tooltipText || displayText;
+}
+
 function loadFromGitHub() {
     loadingState.style.display = 'flex';
+    setLastUpdatedLabel('Fetching latest…', 'Requesting data.json from GitHub Pages');
     
     // Aggressive cache busting with timestamp and random number
     const cacheBuster = `?t=${Date.now()}&r=${Math.random()}`;
@@ -219,9 +249,13 @@ function loadFromGitHub() {
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(participants));
                 console.log('✅ Loaded from GitHub:', participants.length, 'participants');
                 renderLeaderboard();
+                const remoteTimestamp = data.lastUpdated || null;
+                const formatted = formatLastUpdated(remoteTimestamp);
+                setLastUpdatedLabel(`GitHub Pages: ${formatted}`, remoteTimestamp || 'No lastUpdated provided.');
             } else {
                 console.log('⚠️ No participants in GitHub data');
                 renderLeaderboard();
+                setLastUpdatedLabel('GitHub Pages: no participants array', 'The data.json file did not include a participants array.');
             }
             loadingState.style.display = 'none';
         })
@@ -230,6 +264,7 @@ function loadFromGitHub() {
             // Fallback to localStorage
             renderLeaderboard();
             loadingState.style.display = 'none';
+            setLastUpdatedLabel('Offline: showing cached data', 'Failed to fetch from GitHub Pages. Check console for details.');
         });
 }
 
@@ -239,6 +274,7 @@ function saveData() {
     
     // Show instructions to update GitHub
     if (USE_GITHUB_STORAGE && isAdminLoggedIn) {
+        setLastUpdatedLabel('Local draft (not yet synced)', 'Push the updated data.json to GitHub so other devices can see it.');
         showGitHubUpdateInstructions();
     }
 }

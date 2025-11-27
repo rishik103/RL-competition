@@ -250,6 +250,29 @@ body::before {
     font-weight: 700;
 }
 
+.last-updated-banner {
+    display: none;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(139, 92, 246, 0.1);
+    border: 1px solid rgba(139, 92, 246, 0.35);
+    color: #e5e7ff;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.75rem;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+    backdrop-filter: blur(8px);
+}
+
+.last-updated-banner .label {
+    font-weight: 600;
+    color: #f4f4ff;
+}
+
+.last-updated-banner .value {
+    font-family: 'Inter', sans-serif;
+}
+
 .view-all-btn {
     background: transparent;
     color: var(--primary-color);
