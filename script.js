@@ -3,7 +3,10 @@ const ADMIN_PASSWORD = 'ibot2025-26'; // Change this to your secure password
 const ADMIN_SECRET_KEY = 'ibot-admin-2025'; // Secret passphrase - change this!
 const STORAGE_KEY = 'rl_leaderboard_data';
 const ADMIN_AUTH_KEY = 'rl_admin_auth';
-const GITHUB_DATA_URL = 'https://raw.githubusercontent.com/rishik103/RL-competition/main/data.json';
+// Use relative path so the site fetches `data.json` from the Pages domain.
+// This avoids cross-CDN caching for raw.githubusercontent.com and respects
+// our aggressive cache-busting query string.
+const GITHUB_DATA_URL = './data.json';
 const USE_GITHUB_STORAGE = true; // Set to true to use GitHub, false to use localStorage only
 
 // State
