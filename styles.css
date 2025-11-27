@@ -273,67 +273,6 @@ body::before {
     font-family: 'Inter', sans-serif;
 }
 
-/* Hero / Banner */
-.hero {
-    margin: 1.5rem 0 2rem 0;
-}
-.hero-inner {
-    display: flex;
-    gap: 1rem;
-    align-items: center;
-    background: linear-gradient(135deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
-    border: 1px solid rgba(139,92,246,0.08);
-    padding: 1rem 1.25rem;
-    border-radius: 12px;
-    box-shadow: 0 6px 30px rgba(139,92,246,0.05);
-}
-.hero-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 72px;
-    height: 72px;
-}
-.hero-title {
-    margin: 0 0 0.25rem 0;
-    font-size: 1.25rem;
-    letter-spacing: 0.6px;
-}
-.hero-description {
-    margin: 0;
-    color: rgba(229,231,255,0.9);
-    font-size: 0.95rem;
-}
-
-/* Leaderboard item card improvements */
-.leaderboard-item {
-    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-    border-radius: 12px;
-    padding: 1rem;
-    margin: 0.5rem;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    width: calc(33.333% - 1rem);
-    box-shadow: 0 6px 20px rgba(11,7,20,0.15);
-    transition: transform 0.18s cubic-bezier(.2,.9,.3,1), box-shadow 0.18s;
-}
-.leaderboard-item:hover { transform: translateY(-6px); box-shadow: 0 18px 40px rgba(139,92,246,0.08); }
-.leaderboard-item .team-info { flex: 1; }
-.leaderboard-item .team-name { font-weight: 700; font-size: 1rem; }
-.leaderboard-item .team-id { font-size: 0.85rem; color: var(--text-secondary); }
-.leaderboard-item .score { font-weight: 700; color: #fff; min-width: 90px; text-align: right; }
-.leaderboard-item .repo-link { margin-left: 0.75rem; color: #8b5cf6; font-weight: 600; text-decoration: none; }
-
-/* Responsive adjustments */
-@media (max-width: 900px) {
-    .leaderboard-item { width: calc(50% - 1rem); }
-}
-@media (max-width: 560px) {
-    .leaderboard-item { width: 100%; }
-    .hero-inner { flex-direction: column; align-items: flex-start; }
-}
-
 .view-all-btn {
     background: transparent;
     color: var(--primary-color);
