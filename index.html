@@ -27,18 +27,6 @@
             </div>
         </header>
 
-        <!-- Search Bar -->
-        <div class="search-section">
-            <div class="search-container">
-                <svg class="search-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
-                    <path d="M17.5 17.5L13.875 13.875M15.8333 9.16667C15.8333 12.8486 12.8486 15.8333 9.16667 15.8333C5.48477 15.8333 2.5 12.8486 2.5 9.16667C2.5 5.48477 5.48477 2.5 9.16667 2.5C12.8486 2.5 15.8333 5.48477 15.8333 9.16667Z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                </svg>
-                <input type="text" id="searchInput" placeholder="Search by team name or ID..." class="search-input">
-                <button id="clearSearch" class="clear-btn" style="display: none;">×</button>
-            </div>
-            <div id="searchResult" class="search-result" style="display: none;"></div>
-        </div>
-
         <!-- Leaderboard -->
         <div class="leaderboard-section">
             <div class="leaderboard-header">
@@ -84,6 +72,17 @@
                 <button class="close-btn" id="closeFullLeaderboard">&times;</button>
             </div>
             <div class="modal-body">
+                <!-- Search Bar -->
+                <div class="search-section" style="margin-bottom: 1.5rem;">
+                    <div class="search-container">
+                        <svg class="search-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                            <path d="M17.5 17.5L13.875 13.875M15.8333 9.16667C15.8333 12.8486 12.8486 15.8333 9.16667 15.8333C5.48477 15.8333 2.5 12.8486 2.5 9.16667C2.5 5.48477 5.48477 2.5 9.16667 2.5C12.8486 2.5 15.8333 5.48477 15.8333 9.16667Z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                        <input type="text" id="searchInput" placeholder="Search by team name or ID..." class="search-input">
+                        <button id="clearSearch" class="clear-btn" style="display: none;">×</button>
+                    </div>
+                    <div id="searchResult" class="search-result" style="display: none;"></div>
+                </div>
                 <div id="fullLeaderboardContainer" class="leaderboard">
                     <!-- Full leaderboard will be rendered here -->
                 </div>

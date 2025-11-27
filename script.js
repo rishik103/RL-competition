@@ -448,9 +448,9 @@ function renderFullLeaderboard() {
 
 function createLeaderboardItemHTML(participant, rank) {
     const rankClass = rank <= 3 ? `rank-${rank}` : '';
-    const repoLink = participant.hfRepo ? 
+    const repoLink = participant.hfRepo && isAdminLoggedIn ? 
         `<a href="${participant.hfRepo}" target="_blank" class="repo-link">View Repo →</a>` : 
-        '<span style="color: var(--text-secondary); font-size: 0.875rem;">No repo</span>';
+        '';
 
     return `
         <div class="leaderboard-item ${rankClass}">
@@ -477,6 +477,8 @@ function handleAdminLogin(e) {
         closeModal(adminModal);
         openModal(adminPanelModal);
         renderAdminTable();
+        renderLeaderboard(); // Re-render to show repo links
+        renderFullLeaderboard(); // Re-render full leaderboard too
         document.getElementById('adminPassword').value = '';
     } else {
         alert('Incorrect password!');
